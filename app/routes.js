@@ -21,6 +21,10 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/api/NewAlbum_Upload', function(req, res) {
+        res.sendfile('./public/views/NewAlbum_Upload.html');
+    });
+
     // route to handle creating goes here (app.post)
     // route to handle delete goes here (app.delete)
 
