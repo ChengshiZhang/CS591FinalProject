@@ -21,8 +21,10 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/api/NewAlbum_Upload', function(req, res) {
-        res.sendfile('./public/views/NewAlbum_Upload.html');
+    app.post('/api/NewAlbum_Upload', function(req, res) {
+        //res.sendfile('./public/views/NewAlbum_Upload.html');
+        res.json(req.body);
+        console.log(req.body);
     });
 
     // route to handle creating goes here (app.post)

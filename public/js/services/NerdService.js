@@ -9,7 +9,7 @@ angular.module('NerdService', []).factory('Nerd', ['$http', function($http) {
         // these will work when more API routes are defined on the Node side of things
         // call to POST and create a new nerd
         create : function(nerdData) {
-            return $http.post('/api/nerds', nerdData);
+            return $http.post('/api/NewAlbum_Upload', nerdData);
         },
 
         // call to DELETE a nerd
