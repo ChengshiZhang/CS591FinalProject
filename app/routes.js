@@ -28,7 +28,7 @@ module.exports = function(app) {
         // Convert image file to base-64
         base64Img.base64(filePath, function(err, data) {
 
-            // Call the Google Vision API with the base-64 formatted image
+            // Call Google's Cloud Vision API with the base-64 formatted image
             let base64Content = data.split(",");
 
             var options = { method: 'POST',
@@ -40,20 +40,68 @@ module.exports = function(app) {
                 body:
                     { requests:
                         [ { image: { content: base64Content[1] },
-            features:
-                [ { type: 'FACE_DETECTION', maxResults: 5 },
-                    { type: 'WEB_DETECTION', maxResults: 3 } ] } ] },
-            json: true };
+                features:
+                    [ { type: 'FACE_DETECTION', maxResults: 5 },
+                      { type: 'WEB_DETECTION',  maxResults: 3 } ] } ] },
+                json: true
+            };
 
             request(options, function (error, response, body) {
                 if (error) throw new Error(error);
 
-                console.log(body);
+                // Select 3 keywords from the result
+                let selectedKeywords = selectKeywords(body);
+                console.log(selectedKeywords);
+
+
+
             });
         });
 
 
     });
+
+    // Selects 3 most representative keywords from the Google's Cloud Vision API call result
+    let selectKeywords = function (callResult) {
+
+        let selectedKeywords = [];
+
+        // If the result contains no faceAnnotations analysis
+        if(callResult.responses[0].faceAnnotations == null){
+            return selectedKeywords;
+        }else{
+            // First check the face annotation
+            // If the confidence is less than 0.9, face annotation analysis will be ignored
+            if(callResult.responses[0].faceAnnotations[0].detectionConfidence > 0.9){
+                // If the emotion detected is joy
+                if(callResult.responses[0].faceAnnotations[0].joyLikelihood == 'VERY_LIKELY'){
+                    selectedKeywords.push('happy');
+                }
+                // If the emotion detected is anger
+                else if(callResult.responses[0].faceAnnotations[0].angerLikelihood == 'VERY_LIKELY'){
+                    selectedKeywords.push('angry');
+                }
+                // If the emotion detected is sorrow
+                else if(callResult.responses[0].faceAnnotations[0].sorrowLikelihood == 'VERY_LIKELY'){
+                    selectedKeywords.push('sad');
+                }
+                // If the emotion detected is surprise
+                else if(callResult.responses[0].faceAnnotations[0].surpriseLikelihood == 'VERY_LIKELY'){
+                    selectedKeywords.push('spooky');
+                }
+            }
+
+            // Then check the web detection
+
+            let selLen = selectedKeywords.length;
+            for (i = 0; i < 3 - selLen; i++) {
+                selectedKeywords.push(callResult.responses[0].webDetection.webEntities[i].description);
+            }
+
+        }
+
+        return selectedKeywords;
+    };
 
     app.post('/api/NewAlbum_Upload', function(req, res) {
         //res.sendfile('./public/views/NewAlbum_Upload.html');
