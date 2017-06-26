@@ -1,8 +1,11 @@
-sprintf = require('sprintf-js').sprintf;
+var sprintf   = require('sprintf-js').sprintf;
+var base64Img = require('base64-img');
+var request   = require("request");
 
 var Nerd = require('./models/nerd');
-var User = require('./models/User')
-var currentUser = require('../config/currentUser')
+var User = require('./models/User');
+var currentUser = require('../config/currentUser');
+var googleConfig = require('../config/googleConfig');
 
 module.exports = function(app) {
 
@@ -11,19 +14,44 @@ module.exports = function(app) {
         if (!req.files)
             return res.status(400).send('No files were uploaded.');
 
+        // Increment the number of pictures and create path to store them
         currentUser.numPicture++;
+        filePath = sprintf('uploads/%s_%d_%d.jpg', currentUser.userID, currentUser.numAlbum+1, currentUser.numPicture);
 
+        // Get the image file and move it to path created
         let uploadedImage = req.files.uploadedImage;
-
-        uploadDirectory = sprintf('uploads/%s_%d_%d.jpg', currentUser.userID, currentUser.numAlbum+1, currentUser.numPicture);
-
-        // Use the mv() method to place the file somewhere on your server
-        uploadedImage.mv(uploadDirectory, function(err) {
+        uploadedImage.mv(filePath, function(err) {
             if (err)
                 return res.status(500).send(err);
-
-            //res.json('File uploaded!');
         });
+
+        // Convert image file to base-64
+        base64Img.base64(filePath, function(err, data) {
+
+            // Call the Google Vision API with the base-64 formatted image
+            let base64Content = data.split(",");
+
+            var options = { method: 'POST',
+                url: 'https://vision.googleapis.com/v1/images:annotate',
+                qs: { key: googleConfig.key },
+                headers:
+                    {   'cache-control': 'no-cache',
+                        'content-type': 'application/json' },
+                body:
+                    { requests:
+                        [ { image: { content: base64Content[1] },
+            features:
+                [ { type: 'FACE_DETECTION', maxResults: 5 },
+                    { type: 'WEB_DETECTION', maxResults: 3 } ] } ] },
+            json: true };
+
+            request(options, function (error, response, body) {
+                if (error) throw new Error(error);
+
+                console.log(body);
+            });
+        });
+
 
     });
 
