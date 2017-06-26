@@ -13,6 +13,10 @@ var db = require('./config/db');
 
 var port = process.env.PORT || 3000; // set our port
 mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
+const conn = mongoose.connection
+conn.once('open', function () {
+    console.log('Connection successful.')
+});
 
 // get all data/stuff of the body (POST) parameters
 app.use(bodyParser.json()); // parse application/json 

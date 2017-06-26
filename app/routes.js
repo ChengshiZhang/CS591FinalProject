@@ -1,13 +1,38 @@
-// grab the nerd model we just created
+sprintf = require('sprintf-js').sprintf;
+
 var Nerd = require('./models/nerd');
+var User = require('./models/User')
+var currentUser = require('../config/currentUser')
 
 module.exports = function(app) {
 
-    // server routes ===========================================================
-    // handle things like api calls
-    // authentication routes
+    app.post('/api/upload', function(req, res) {
 
-    // sample api route
+        if (!req.files)
+            return res.status(400).send('No files were uploaded.');
+
+        currentUser.numPicture++;
+
+        let uploadedImage = req.files.uploadedImage;
+
+        uploadDirectory = sprintf('uploads/%s_%d_%d.jpg', currentUser.userID, currentUser.numAlbum+1, currentUser.numPicture);
+
+        // Use the mv() method to place the file somewhere on your server
+        uploadedImage.mv(uploadDirectory, function(err) {
+            if (err)
+                return res.status(500).send(err);
+
+            //res.json('File uploaded!');
+        });
+
+    });
+
+    app.post('/api/NewAlbum_Upload', function(req, res) {
+        //res.sendfile('./public/views/NewAlbum_Upload.html');
+        res.json(req.body);
+        console.log(req.body);
+    });
+
     app.get('/api/nerds', function(req, res) {
         // use mongoose to get all nerds in the database
         Nerd.find(function(err, nerds) {
@@ -21,35 +46,6 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/api/upload', function(req, res) {
-        if (!req.files)
-            return res.status(400).send('No files were uploaded.');
-
-        // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-        let sampleFile = req.files.sampleFile;
-        
-        console.log(req.files.sampleFile);
-
-        // Use the mv() method to place the file somewhere on your server
-        sampleFile.mv('uploads/pic1.jpg', function(err) {
-            if (err)
-                return res.status(500).send(err);
-
-            res.send('File uploaded!');
-        });
-    });
-
-    app.post('/api/NewAlbum_Upload', function(req, res) {
-        //res.sendfile('./public/views/NewAlbum_Upload.html');
-        res.json(req.body);
-        console.log(req.body);
-    });
-
-    // route to handle creating goes here (app.post)
-    // route to handle delete goes here (app.delete)
-
-    // frontend routes =========================================================
-    // route to handle all angular requests
     app.get('*', function(req, res) {
         res.sendfile('./public/views/index.html'); // load our public/index.html file
     });
