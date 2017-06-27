@@ -4,12 +4,13 @@ var request   = require("request");
 
 var Nerd = require('./models/nerd');
 var User = require('./models/User');
+var imageModel = require('./models/Image');
 var currentUser = require('../config/currentUser');
 var googleConfig = require('../config/googleConfig');
 
 module.exports = function(app) {
 
-    app.post('/api/upload', function(req, res) {
+    app.post('/api/NewAlbum_Upload_Upload', function(req, res) {
 
         if (!req.files)
             return res.status(400).send('No files were uploaded.');
@@ -27,6 +28,22 @@ module.exports = function(app) {
 
         // Convert image file to base-64
         base64Img.base64(filePath, function(err, data) {
+
+            // Store the image file to database
+            const anImage = new imageModel({
+                userID  : currentUser.userID,
+                imageID : currentUser.numPicture,
+                album   : currentUser.numAlbum+1,
+                content : data
+            });
+
+            anImage.save(function(err) {
+                if (err) {res.send(err)}
+                //send back the new person
+                else {
+                    console.log('Image stored!');
+                }
+            })
 
             // Call Google's Cloud Vision API with the base-64 formatted image
             let base64Content = data.split(",");
@@ -53,7 +70,14 @@ module.exports = function(app) {
                 let selectedKeywords = selectKeywords(body);
                 console.log(selectedKeywords);
 
-
+                // Insert all keywords obtained from all photos into an object
+                for(i = 0; i < 3; i++) {
+                    if (currentUser.AlbumKeywords[selectedKeywords[i]] == undefined) {
+                        currentUser.AlbumKeywords[selectedKeywords[i]] = 1;
+                    }else{
+                        currentUser.AlbumKeywords[selectedKeywords[i]]++;
+                    }
+                }
 
             });
         });
@@ -103,10 +127,14 @@ module.exports = function(app) {
         return selectedKeywords;
     };
 
-    app.post('/api/NewAlbum_Upload', function(req, res) {
+    app.post('/api/NewAlbum_Upload_Next', function(req, res) {
         //res.sendfile('./public/views/NewAlbum_Upload.html');
-        res.json(req.body);
-        console.log(req.body);
+        //res.json(req.body);
+
+        let sortedAlbumKeywords = sortProperties(currentUser.AlbumKeywords);
+        currentUser.AlbumKeywords = [sortedAlbumKeywords[0][0], sortedAlbumKeywords[1][0], sortedAlbumKeywords[2][0]];
+        console.log(currentUser.AlbumKeywords);
+
     });
 
     app.get('/api/nerds', function(req, res) {
@@ -127,3 +155,20 @@ module.exports = function(app) {
     });
 
 };
+
+
+let sortProperties = function(obj)
+{
+    // convert object into array
+    var sortable=[];
+    for(var key in obj)
+        if(obj.hasOwnProperty(key))
+            sortable.push([key, obj[key]]); // each item is an array in format [key, value]
+
+    // sort items by value
+    sortable.sort(function(a, b)
+    {
+        return b[1]-a[1]; // compare numbers
+    });
+    return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
+}

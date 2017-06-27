@@ -2,11 +2,11 @@ angular.module('NewAlbum_UploadCtrl', []).controller('NewAlbum_UploadController'
 
     $scope.taglinee = 'Gimme your pictures';
 
-    $scope.postRequest = function postRequest() {
+    $scope.nextButton = function nextButton() {
 
         const request = {
             method: 'post',
-            url: 'http://localhost:3000/api/NewAlbum_Upload',
+            url: 'http://localhost:3000/api/NewAlbum_Upload_Next',
             data: {
                 name: 'Winston',
                 line: 'hithere',
