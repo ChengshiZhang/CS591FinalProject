@@ -26,6 +26,11 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
         .when('/NewAlbum_Choose', {
             templateUrl: 'views/NewAlbum_Choose.html',
             controller: 'NewAlbum_ChooseController'
+        })
+
+        .when('/NewAlbum_Music', {
+            templateUrl: 'views/NewAlbum_Music.html',
+            controller: 'NewAlbum_MusicController'
         });
 
 	$locationProvider.html5Mode(true);
