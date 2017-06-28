@@ -89,6 +89,8 @@ module.exports = function(app) {
                     var access_token = body.access_token,
                         refresh_token = body.refresh_token;
 
+                    currentUser.accessToken = access_token;
+
                     var options = {
                         url: 'https://api.spotify.com/v1/me',
                         headers: { 'Authorization': 'Bearer ' + access_token },
@@ -231,37 +233,100 @@ module.exports = function(app) {
     });
 
     //
-    app.post('/api/ChooseName_1', function(req, res) {
+    app.get('/api/ChooseName_1', function(req, res) {
         currentUser.AlbumKeywords = currentUser.AlbumKeywords[0];
+        console.log(currentUser.AlbumKeywords, 'selected');
+
+        spotifyUrl = sprintf('https://api.spotify.com/v1/search?q=%s&type=track', currentUser.AlbumKeywords);
+
+        var options = {
+            url: spotifyUrl,
+            headers: { 'Authorization': 'Bearer ' + currentUser.accessToken},
+            json: true
+        };
+
+        // use the access token to access the Spotify Web API
+        request.get(options, function(error, response, body) {
+
+            let externalURL_1 = body.tracks.items[0].external_urls.spotify;
+            let externalURL_2 = body.tracks.items[1].external_urls.spotify;
+            let externalURL_3 = body.tracks.items[2].external_urls.spotify;
+
+            externalURL_1 = externalURL_1.split("track/")[1];
+            externalURL_2 = externalURL_2.split("track/")[1];
+            externalURL_3 = externalURL_3.split("track/")[1];
+
+            embedURL_1 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_1);
+            embedURL_2 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_2);
+            embedURL_3 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_3);
+
+            res.send([embedURL_1, embedURL_2, embedURL_3]);
+        });
     });
 
-    app.post('/api/ChooseName_2', function(req, res) {
+    app.get('/api/ChooseName_2', function(req, res) {
         currentUser.AlbumKeywords = currentUser.AlbumKeywords[1];
+        console.log(currentUser.AlbumKeywords, 'selected');
+
+        spotifyUrl = sprintf('https://api.spotify.com/v1/search?q=%s&type=track', currentUser.AlbumKeywords);
+
+        var options = {
+            url: spotifyUrl,
+            headers: { 'Authorization': 'Bearer ' + currentUser.accessToken},
+            json: true
+        };
+
+        // use the access token to access the Spotify Web API
+        request.get(options, function(error, response, body) {
+            res.send([body.tracks.items[0].external_urls.spotify, body.tracks.items[1].external_urls.spotify, body.tracks.items[2].external_urls.spotify]);
+        });
     });
 
-    app.post('/api/ChooseName_3', function(req, res) {
+    app.get('/api/ChooseName_3', function(req, res) {
         currentUser.AlbumKeywords = currentUser.AlbumKeywords[2];
+        console.log(currentUser.AlbumKeywords, 'selected');
+
+        spotifyUrl = sprintf('https://api.spotify.com/v1/search?q=%s&type=track', currentUser.AlbumKeywords);
+
+        var options = {
+            url: spotifyUrl,
+            headers: { 'Authorization': 'Bearer ' + currentUser.accessToken},
+            json: true
+        };
+
+        // use the access token to access the Spotify Web API
+        request.get(options, function(error, response, body) {
+            res.send([body.tracks.items[0].external_urls.spotify, body.tracks.items[1].external_urls.spotify, body.tracks.items[2].external_urls.spotify]);
+        });
     });
 
     app.post('/api/ChooseColor_1', function(req, res) {
         currentUser.AlbumColor = 'cornflowerblue';
-        console.log(currentUser.AlbumColor);
+        console.log(currentUser.AlbumColor, 'selected');
     });
 
     app.post('/api/ChooseColor_2', function(req, res) {
         currentUser.AlbumColor = 'indianred';
-        console.log(currentUser.AlbumColor);
+        console.log(currentUser.AlbumColor, 'selected');
     });
 
     app.post('/api/ChooseColor_3', function(req, res) {
         currentUser.AlbumColor = 'darkslategrey';
-        console.log(currentUser.AlbumColor);
+        console.log(currentUser.AlbumColor, 'selected');
+    });
+
+    // The "Next" button on the NewAlbum_Choose page
+    app.get('/api/NewAlbum_Choose_Next', function(req, res) {
+
     });
 
     app.get('*', function(req, res) {
         res.sendfile('./public/views/index.html'); // load our public/index.html file
     });
 
+    app.post('/api/error', function(req, res) {
+        console.log('/api/error called');
+    });
 };
 
 /*===============================HELPER FUNCTIONS===================================*/
@@ -298,19 +363,19 @@ let selectKeywords = function (callResult) {
         if(callResult.responses[0].faceAnnotations[0].detectionConfidence > 0.8){
             // If the emotion detected is joy
             if(callResult.responses[0].faceAnnotations[0].joyLikelihood == 'VERY_LIKELY'){
-                selectedKeywords.push('happy');
+                selectedKeywords.push('Happy');
             }
             // If the emotion detected is anger
             else if(callResult.responses[0].faceAnnotations[0].angerLikelihood == 'VERY_LIKELY'){
-                selectedKeywords.push('angry');
+                selectedKeywords.push('Angry Days');
             }
             // If the emotion detected is sorrow
             else if(callResult.responses[0].faceAnnotations[0].sorrowLikelihood == 'VERY_LIKELY'){
-                selectedKeywords.push('sad');
+                selectedKeywords.push('Sad Days');
             }
             // If the emotion detected is surprise
             else if(callResult.responses[0].faceAnnotations[0].surpriseLikelihood == 'VERY_LIKELY'){
-                selectedKeywords.push('spooky');
+                selectedKeywords.push('Wow!');
             }
         }
 
@@ -325,3 +390,21 @@ let selectKeywords = function (callResult) {
 
     return selectedKeywords;
 };
+
+let searchMusic = function(){
+
+    spotifyUrl = sprintf('https://api.spotify.com/v1/search?q=%s&type=track', currentUser.AlbumKeywords);
+
+    var options = {
+        url: spotifyUrl,
+        headers: { 'Authorization': 'Bearer ' + currentUser.accessToken},
+        json: true
+    };
+
+    // use the access token to access the Spotify Web API
+    request.get(options, function(error, response, body) {
+        return body.tracks.items[0].external_urls.spotify;
+        console.log(body.tracks.items[0].external_urls.spotify);
+    });
+
+}

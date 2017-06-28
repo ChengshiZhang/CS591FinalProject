@@ -11,27 +11,39 @@ angular.module('NewAlbum_ChooseCtrl', []).controller('NewAlbum_ChooseController'
     $scope.ChooseName_1 = function ChooseName_1() {
 
         $http({
-            method : "POST",
+            method : "GET",
             url : 'http://localhost:3000/api/ChooseName_1'
-        })
+        }).then(function mySuccess(response) {
+            sharedProperties.setProperty(response);
+        }, function myError(response) {
+            sharedProperties.setProperty('$http error occurred at NewAlbum_ChooseCtrl.js');
+        });
 
     }
 
     $scope.ChooseName_2 = function ChooseName_2() {
 
         $http({
-            method : "POST",
+            method : "GET",
             url : 'http://localhost:3000/api/ChooseName_2'
-        })
+        }).then(function mySuccess(response) {
+            sharedProperties.setProperty(response);
+        }, function myError(response) {
+            sharedProperties.setProperty('$http error occurred at NewAlbum_ChooseCtrl.js');
+        });
 
     }
 
     $scope.ChooseName_3 = function ChooseName_3() {
 
         $http({
-            method : "POST",
+            method : "GET",
             url : 'http://localhost:3000/api/ChooseName_3'
-        })
+        }).then(function mySuccess(response) {
+            sharedProperties.setProperty(response);
+        }, function myError(response) {
+            sharedProperties.setProperty('$http error occurred at NewAlbum_ChooseCtrl.js');
+        });
 
     }
 
@@ -59,6 +71,10 @@ angular.module('NewAlbum_ChooseCtrl', []).controller('NewAlbum_ChooseController'
             method : "POST",
             url : 'http://localhost:3000/api/ChooseColor_3'
         })
+
+    }
+
+    $scope.next = function next(){
 
     }
 
