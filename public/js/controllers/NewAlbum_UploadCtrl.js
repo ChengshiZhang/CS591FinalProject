@@ -1,9 +1,10 @@
-angular.module('NewAlbum_UploadCtrl', []).controller('NewAlbum_UploadController', function($scope, $http) {
+angular.module('NewAlbum_UploadCtrl', []).controller('NewAlbum_UploadController', function($rootScope, $scope, $http, $window) {
 
-    $scope.taglinee = 'Gimme your pictures';
+    $scope.tagline = 'Gimme your pictures';
 
     $scope.nextButton = function nextButton() {
 
+        console.log('aaaaaa');
         const request = {
             method: 'post',
             url: 'http://localhost:3000/api/NewAlbum_Upload_Next',
@@ -14,11 +15,15 @@ angular.module('NewAlbum_UploadCtrl', []).controller('NewAlbum_UploadController'
             }
         }
 
+        console.log('bbbbbbb');
+
         $http(request)
             .then(function (response) {
+                    console.log('ccccccc');
                     $scope.inputForm.$setPristine()
                     $scope.name = $scope.line = ''
-                    console.log(response)
+                    console.log('response from api:', response)
+                    $rootScope.AlbumKeywords = response;
                 },
                 function (error) {
                     if (error.status === 401) {
@@ -28,6 +33,6 @@ angular.module('NewAlbum_UploadCtrl', []).controller('NewAlbum_UploadController'
                     }
                 }
             )
-        }
     }
-);
+
+});

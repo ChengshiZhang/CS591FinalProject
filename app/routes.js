@@ -133,7 +133,9 @@ module.exports = function(app) {
 
         let sortedAlbumKeywords = sortProperties(currentUser.AlbumKeywords);
         currentUser.AlbumKeywords = [sortedAlbumKeywords[0][0], sortedAlbumKeywords[1][0], sortedAlbumKeywords[2][0]];
-        console.log(currentUser.AlbumKeywords);
+        console.log('AlbumKeywords:', currentUser.AlbumKeywords);
+
+        res.send(currentUser.AlbumKeywords);
 
     });
 
