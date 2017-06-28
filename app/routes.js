@@ -4,8 +4,7 @@ var request   = require("request");
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var Nerd = require('./models/nerd');
-var User = require('./models/User');
+var userModel = require('./models/User');
 var imageModel = require('./models/Image');
 var currentUser = require('../config/currentUser');
 var googleConfig = require('../config/googleConfig');
@@ -36,8 +35,6 @@ module.exports = function(app) {
     var stateKey = 'spotify_auth_state';
 
     app.get('/login', function(req, res) {
-        
-        console.log('login callllled');
 
         var state = generateRandomString(16);
         res.cookie(stateKey, state);
@@ -260,6 +257,7 @@ module.exports = function(app) {
             embedURL_2 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_2);
             embedURL_3 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_3);
 
+            currentUser.AlbumMusic = [embedURL_1, embedURL_2, embedURL_3];
             res.send([embedURL_1, embedURL_2, embedURL_3]);
         });
     });
@@ -278,7 +276,21 @@ module.exports = function(app) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-            res.send([body.tracks.items[0].external_urls.spotify, body.tracks.items[1].external_urls.spotify, body.tracks.items[2].external_urls.spotify]);
+
+            let externalURL_1 = body.tracks.items[0].external_urls.spotify;
+            let externalURL_2 = body.tracks.items[1].external_urls.spotify;
+            let externalURL_3 = body.tracks.items[2].external_urls.spotify;
+
+            externalURL_1 = externalURL_1.split("track/")[1];
+            externalURL_2 = externalURL_2.split("track/")[1];
+            externalURL_3 = externalURL_3.split("track/")[1];
+
+            embedURL_1 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_1);
+            embedURL_2 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_2);
+            embedURL_3 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_3);
+
+            currentUser.AlbumMusic = [embedURL_1, embedURL_2, embedURL_3];
+            res.send([embedURL_1, embedURL_2, embedURL_3]);
         });
     });
 
@@ -296,7 +308,20 @@ module.exports = function(app) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-            res.send([body.tracks.items[0].external_urls.spotify, body.tracks.items[1].external_urls.spotify, body.tracks.items[2].external_urls.spotify]);
+            let externalURL_1 = body.tracks.items[0].external_urls.spotify;
+            let externalURL_2 = body.tracks.items[1].external_urls.spotify;
+            let externalURL_3 = body.tracks.items[2].external_urls.spotify;
+
+            externalURL_1 = externalURL_1.split("track/")[1];
+            externalURL_2 = externalURL_2.split("track/")[1];
+            externalURL_3 = externalURL_3.split("track/")[1];
+
+            embedURL_1 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_1);
+            embedURL_2 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_2);
+            embedURL_3 = sprintf('https://open.spotify.com/embed?uri=spotify:track:%s', externalURL_3);
+
+            currentUser.AlbumMusic = [embedURL_1, embedURL_2, embedURL_3];
+            res.send([embedURL_1, embedURL_2, embedURL_3]);
         });
     });
 
@@ -318,6 +343,40 @@ module.exports = function(app) {
     // The "Next" button on the NewAlbum_Choose page
     app.get('/api/NewAlbum_Choose_Next', function(req, res) {
 
+    });
+
+    app.post('/api/ChooseMusic_1', function(req, res) {
+        currentUser.AlbumMusic = currentUser.AlbumMusic[0];
+    });
+
+    app.post('/api/ChooseMusic_2', function(req, res) {
+        currentUser.AlbumMusic = currentUser.AlbumMusic[1];
+    });
+
+    app.post('/api/ChooseMusic_3', function(req, res) {
+        currentUser.AlbumMusic = currentUser.AlbumMusic[2];
+    });
+
+    // The "Next" button on the NewAlbum_Choose page
+    app.get('/api/NewAlbum_Music_Next', function(req, res) {
+
+        // Store the User's info to database
+        const aUser = new userModel({
+            userID : currentUser.userID,
+            userName : currentUser.userName,
+            numPicture : currentUser.numPicture,
+            numAlbum : currentUser.numAlbum+1,
+            AlbumKeywords: currentUser.AlbumKeywords,
+            AlbumColor: currentUser.AlbumColor,
+            AlbumMusic: currentUser.AlbumMusic
+        });
+
+        aUser.save(function(err) {
+            if (err) {res.send(err)}
+            else {
+                console.log('User stored!');
+            }
+        })
     });
 
     app.get('*', function(req, res) {

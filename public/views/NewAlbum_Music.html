@@ -1,14 +1,27 @@
 <div class="jumbotron text-center" ng-init="plugInURL()">
 
+    <style type="text/css">
+        .buttonNext{
+            margin-left:250px;
+        }
+    </style>
+
     <script data-require="angular.js@1.4.7" data-semver="1.4.7" src="https://code.angularjs.org/1.4.7/angular.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-filter/0.4.7/angular-filter.js"></script>
 
     <h1>Choose Music</h1>
-
+    <br><br>
     <iframe src="{{musicURL1}}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
     <iframe src="{{musicURL2}}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
     <iframe src="{{musicURL3}}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+    <br>
+    <button ng-click="ChooseMusic_1()">choose</button>
+    <button class="buttonNext" ng-click="ChooseMusic_2()">choose</button>
+    <button class="buttonNext" ng-click="ChooseMusic_3()">choose</button>
 
+    <hr>
+
+    <a href="/" ng-click="nextPage()">Next</a>
 
 
 </div>
