@@ -127,7 +127,7 @@ module.exports = function(app) {
         return selectedKeywords;
     };
 
-    app.post('/api/NewAlbum_Upload_Next', function(req, res) {
+    app.get('/api/NewAlbum_Upload_Next', function(req, res) {
         //res.sendfile('./public/views/NewAlbum_Upload.html');
         //res.json(req.body);
 

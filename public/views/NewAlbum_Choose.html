@@ -1,6 +1,34 @@
 <div class="jumbotron text-center">
-    <h1>Choose Album</h1>
 
-    <p>{{ tagline }}</p>
+    <style type="text/css">
+        .container {
+            width:1200px;
+        }
+        .left {
+            width:480px;
+            float:left;
+        }
+        .right {
+            width:480px;
+            float:right;
+        }
+    </style>
+
+    <div class="container">
+        <div class="left">
+            <h1>Choose a name</h1>
+            <p>{{ keywordOne }}</p>
+            <p>{{ keywordTwo }}</p>
+            <p>{{ keywordThree }}</p>
+        </div>
+
+        <div class="right">
+            <h1>Choose a colour</h1>
+            <p>{{ keywordOne}}</p>
+            <p>{{ keywordTwo }}</p>
+            <p>{{ keywordThree }}</p>
+        </div>
+
+    </div>
 
 </div>
