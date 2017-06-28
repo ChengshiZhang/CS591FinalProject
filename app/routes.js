@@ -85,48 +85,7 @@ module.exports = function(app) {
 
     });
 
-    // Selects 3 most representative keywords from the Google's Cloud Vision API call result
-    let selectKeywords = function (callResult) {
-
-        let selectedKeywords = [];
-
-        // If the result contains no faceAnnotations analysis
-        if(callResult.responses[0].faceAnnotations == null){
-            return selectedKeywords;
-        }else{
-            // First check the face annotation
-            // If the confidence is less than 0.9, face annotation analysis will be ignored
-            if(callResult.responses[0].faceAnnotations[0].detectionConfidence > 0.9){
-                // If the emotion detected is joy
-                if(callResult.responses[0].faceAnnotations[0].joyLikelihood == 'VERY_LIKELY'){
-                    selectedKeywords.push('happy');
-                }
-                // If the emotion detected is anger
-                else if(callResult.responses[0].faceAnnotations[0].angerLikelihood == 'VERY_LIKELY'){
-                    selectedKeywords.push('angry');
-                }
-                // If the emotion detected is sorrow
-                else if(callResult.responses[0].faceAnnotations[0].sorrowLikelihood == 'VERY_LIKELY'){
-                    selectedKeywords.push('sad');
-                }
-                // If the emotion detected is surprise
-                else if(callResult.responses[0].faceAnnotations[0].surpriseLikelihood == 'VERY_LIKELY'){
-                    selectedKeywords.push('spooky');
-                }
-            }
-
-            // Then check the web detection
-
-            let selLen = selectedKeywords.length;
-            for (i = 0; i < 3 - selLen; i++) {
-                selectedKeywords.push(callResult.responses[0].webDetection.webEntities[i].description);
-            }
-
-        }
-
-        return selectedKeywords;
-    };
-
+    // The "Next" button on the NewAlbum_Upload page
     app.get('/api/NewAlbum_Upload_Next', function(req, res) {
         //res.sendfile('./public/views/NewAlbum_Upload.html');
         //res.json(req.body);
@@ -139,17 +98,32 @@ module.exports = function(app) {
 
     });
 
-    app.get('/api/nerds', function(req, res) {
-        // use mongoose to get all nerds in the database
-        Nerd.find(function(err, nerds) {
+    //
+    app.post('/api/ChooseName_1', function(req, res) {
+        currentUser.AlbumKeywords = currentUser.AlbumKeywords[0];
+    });
 
-            // if there is an error retrieving, send the error.
-            // nothing after res.send(err) will execute
-            if (err)
-                res.send(err);
+    app.post('/api/ChooseName_2', function(req, res) {
+        currentUser.AlbumKeywords = currentUser.AlbumKeywords[1];
+    });
 
-            res.json(nerds); // return all nerds in JSON format
-        });
+    app.post('/api/ChooseName_3', function(req, res) {
+        currentUser.AlbumKeywords = currentUser.AlbumKeywords[2];
+    });
+
+    app.post('/api/ChooseColor_1', function(req, res) {
+        currentUser.AlbumColor = 'cornflowerblue';
+        console.log(currentUser.AlbumColor);
+    });
+
+    app.post('/api/ChooseColor_2', function(req, res) {
+        currentUser.AlbumColor = 'indianred';
+        console.log(currentUser.AlbumColor);
+    });
+
+    app.post('/api/ChooseColor_3', function(req, res) {
+        currentUser.AlbumColor = 'darkslategrey';
+        console.log(currentUser.AlbumColor);
     });
 
     app.get('*', function(req, res) {
@@ -158,7 +132,9 @@ module.exports = function(app) {
 
 };
 
+/*===============================HELPER FUNCTIONS===================================*/
 
+// Sort the list of keywords from all the pictures in the album
 let sortProperties = function(obj)
 {
     // convert object into array
@@ -173,4 +149,47 @@ let sortProperties = function(obj)
         return b[1]-a[1]; // compare numbers
     });
     return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
-}
+};
+
+
+// Selects 3 most representative keywords from the Google's Cloud Vision API call result
+let selectKeywords = function (callResult) {
+
+    let selectedKeywords = [];
+
+    // If the result contains no faceAnnotations analysis
+    if(callResult.responses[0].faceAnnotations == null){
+        return selectedKeywords;
+    }else{
+        // First check the face annotation
+        // If the confidence is less than 0.9, face annotation analysis will be ignored
+        if(callResult.responses[0].faceAnnotations[0].detectionConfidence > 0.8){
+            // If the emotion detected is joy
+            if(callResult.responses[0].faceAnnotations[0].joyLikelihood == 'VERY_LIKELY'){
+                selectedKeywords.push('happy');
+            }
+            // If the emotion detected is anger
+            else if(callResult.responses[0].faceAnnotations[0].angerLikelihood == 'VERY_LIKELY'){
+                selectedKeywords.push('angry');
+            }
+            // If the emotion detected is sorrow
+            else if(callResult.responses[0].faceAnnotations[0].sorrowLikelihood == 'VERY_LIKELY'){
+                selectedKeywords.push('sad');
+            }
+            // If the emotion detected is surprise
+            else if(callResult.responses[0].faceAnnotations[0].surpriseLikelihood == 'VERY_LIKELY'){
+                selectedKeywords.push('spooky');
+            }
+        }
+
+        // Then check the web detection
+
+        let selLen = selectedKeywords.length;
+        for (i = 0; i < 3 - selLen; i++) {
+            selectedKeywords.push(callResult.responses[0].webDetection.webEntities[i].description);
+        }
+
+    }
+
+    return selectedKeywords;
+};

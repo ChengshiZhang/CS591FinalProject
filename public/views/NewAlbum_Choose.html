@@ -5,28 +5,64 @@
             width:1200px;
         }
         .left {
-            width:480px;
+            width:450px;
             float:left;
         }
         .right {
-            width:480px;
+            width:450px;
             float:right;
         }
+        .choice1{
+            width: 120px;
+            height: 120px;
+            background-color:cornflowerblue;
+            left:50%;
+        }
+        .choice2{
+            width: 120px;
+            height: 120px;
+            background-color:indianred;
+            vertical-align:middle;
+        }
+        .choice3{
+            width: 120px;
+            height: 120px;
+            background-color:darkslategrey;
+            vertical-align:middle;
+        }
+        .button{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        ​
     </style>
 
     <div class="container">
         <div class="left">
-            <h1>Choose a name</h1>
-            <p>{{ keywordOne }}</p>
-            <p>{{ keywordTwo }}</p>
-            <p>{{ keywordThree }}</p>
+            <h1>Name</h1>
+                <br>
+                <button class="btn btn-primary" ng-click="ChooseName_1()">{{ keywordOne }}</button>
+                <br><br>
+                <button class="btn btn-primary" ng-click="ChooseName_2()">{{ keywordTwo }}</button>
+                <br><br>
+                <button class="btn btn-primary" ng-click="ChooseName_3()">{{ keywordThree }}</button>
         </div>
 
         <div class="right">
-            <h1>Choose a colour</h1>
-            <p>{{ keywordOne}}</p>
-            <p>{{ keywordTwo }}</p>
-            <p>{{ keywordThree }}</p>
+            <h1>Background</h1>
+            <div class="choice1">
+                <button class="button" ng-click="ChooseColor_1()">choose</button>
+            </div>
+            <br>
+            <div class="choice2">
+                <button class="button" ng-click="ChooseColor_2()">choose</button>
+            </div>
+            <br>
+            <div class="choice3">
+                <button class="button" ng-click="ChooseColor_3()">choose</button>
+            </div>
+            <!-- <img src="../../resources/background1.jpg" alt="Background 1" style="width:304px;height:228px;"> -->
         </div>
 
     </div>
