@@ -1,3 +1,6 @@
+/*This module is the backend api for uploading pictures to the album
+ * Front-end controllers that makes calls to this module: NewAlbum_UploadCtrl.js
+ */
 const express = require('express')
 const router = express.Router()
 
@@ -10,6 +13,15 @@ var imageModel = require('../models/Image');
 var currentUser = require('../../config/currentUser');
 var googleConfig = require('../../config/googleConfig');
 
+
+/* When the "upload" button is clicked:
+* 1. Move the image to the "uploads" directory
+* 2. Convert the image to base-64 format
+* 3. Store the image into the database
+* 4. Call Google's Cloud Vision API for image processing
+* 5. Parse the result from the API
+* 6. Store the top 3 keywords from the result
+* */
 router.post('/upload', function(req, res) {
 
     if (!req.files)
@@ -43,7 +55,7 @@ router.post('/upload', function(req, res) {
             else {
                 console.log('Image stored!');
             }
-        })
+        });
 
         // Call Google's Cloud Vision API with the base-64 formatted image
         let base64Content = data.split(",");
@@ -70,7 +82,11 @@ router.post('/upload', function(req, res) {
             let selectedKeywords = selectKeywords(body);
             console.log(selectedKeywords);
 
-            // Insert all keywords obtained from all photos into an object
+            /* Insert the 3 keywords into the AlbumKeywords object as a pair
+            * (keyword: timesAppeared), with the default value for the timesAppeared as 1
+            * If a keyword already exist in the object(from previous uploads),
+            * Increment the timesAppeared value by 1
+            */
             for(i = 0; i < 3; i++) {
                 if (currentUser.AlbumKeywords[selectedKeywords[i]] == undefined) {
                     currentUser.AlbumKeywords[selectedKeywords[i]] = 1;
@@ -78,22 +94,20 @@ router.post('/upload', function(req, res) {
                     currentUser.AlbumKeywords[selectedKeywords[i]]++;
                 }
             }
-
         });
     });
-
 
 });
 
 // The "Next" button on the NewAlbum_Upload page
+// Select the 3 most appeared keywords for all the photos uploaded
 router.get('/next', function(req, res) {
-    //res.sendfile('./public/views/NewAlbum_Upload.html');
-    //res.json(req.body);
 
     let sortedAlbumKeywords = sortProperties(currentUser.AlbumKeywords);
     currentUser.AlbumKeywords = [sortedAlbumKeywords[0][0], sortedAlbumKeywords[1][0], sortedAlbumKeywords[2][0]];
     console.log('AlbumKeywords:', currentUser.AlbumKeywords);
 
+    // Send the 3 most appeared keywords back to the front-end
     res.send(currentUser.AlbumKeywords);
 
 });
@@ -128,8 +142,9 @@ let selectKeywords = function (callResult) {
     if(callResult.responses[0].faceAnnotations == null){
         return selectedKeywords;
     }else{
+
         // First check the face annotation
-        // If the confidence is less than 0.9, face annotation analysis will be ignored
+        // If the confidence is less than 0.8, face annotation analysis will be ignored
         if(callResult.responses[0].faceAnnotations[0].detectionConfidence > 0.8){
             // If the emotion detected is joy
             if(callResult.responses[0].faceAnnotations[0].joyLikelihood == 'VERY_LIKELY'){
@@ -150,14 +165,11 @@ let selectKeywords = function (callResult) {
         }
 
         // Then check the web detection
-
         let selLen = selectedKeywords.length;
         for (i = 0; i < 3 - selLen; i++) {
             selectedKeywords.push(callResult.responses[0].webDetection.webEntities[i].description);
         }
-
     }
-
     return selectedKeywords;
 };
 

@@ -1,15 +1,15 @@
-var request   = require("request");
-var querystring = require('querystring');
-
-var currentUser = require('../../config/currentUser');
-var spotifyConfig = require('../../config/spotifyConfig');
 const express = require('express')
 const router = express.Router()
 
-//===============================Spotify=============================================//
-var client_id = spotifyConfig.client_id; // Your client id
-var client_secret = spotifyConfig.client_secret; // Your secret
-var redirect_uri = spotifyConfig.redirect_uri; // Your redirect uri
+var request   = require("request");
+var querystring = require('querystring');
+var currentUser = require('../../config/currentUser');
+var spotifyConfig = require('../../config/spotifyConfig');
+
+
+var client_id = spotifyConfig.client_id;
+var client_secret = spotifyConfig.client_secret;
+var redirect_uri = spotifyConfig.redirect_uri;
 
 /**
  * Generates a random string containing numbers and letters
@@ -28,6 +28,10 @@ var generateRandomString = function(length) {
 
 var stateKey = 'spotify_auth_state';
 
+/* When /login is called:
+* 1. Handle the user’s login request,
+* 2. Specify the scopes for which authorization is sought,
+*/
 router.get('/login', function(req, res) {
 
     var state = generateRandomString(16);
@@ -45,6 +49,10 @@ router.get('/login', function(req, res) {
         }));
 });
 
+/* When /callback is called from Spotify:
+* 1. Perform the exchange of the authorization code for an access token,
+* 2. Call the Web API endpoint.
+*/
 router.get('/callback', function(req, res) {
 
     // your application requests refresh and access tokens
@@ -110,6 +118,10 @@ router.get('/callback', function(req, res) {
     }
 });
 
+/* When /refresh_token is called:
+* When the access-token expires, use the refresh-token to
+* extend the validity of the access-token
+* */
 router.get('/refresh_token', function(req, res) {
 
     // requesting access token from refresh token

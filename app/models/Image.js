@@ -1,8 +1,8 @@
-// grab the mongoose module
 var mongoose = require('mongoose');
 
-// define our nerd model
-// module.exports allows us to pass this to other files when it is called
+/* The image model allows having a separate database to store images
+* since images are converted to base-64 format and demands much more space than the user model
+* */
 module.exports = mongoose.model('Image', {
     userID  : {type : String, default: ''},
     imageID : {type : Number, default: 0},

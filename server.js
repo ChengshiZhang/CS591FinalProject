@@ -1,4 +1,4 @@
-// modules =================================================
+// npm modules =================================================
 var express        = require('express');
 var app            = express();
 var mongoose       = require('mongoose');
@@ -8,25 +8,23 @@ var fileUpload    = require('express-fileupload');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
+// custom modules =================================================
+const db          = require('./config/db');
+const currentUser = require('./config/currentUser');
 const upload      = require('./app/routes/NewAlbum_Upload');
 const choose      = require('./app/routes/NewAlbum_Choose');
 const music       = require('./app/routes/NewAlbum_Music');
 const spotifyAuth = require('./app/routes/spotifyAuth');
-const currentUser = require('./config/currentUser');
 
 // configuration ===========================================
-
-// config files
-var db = require('./config/db');
-
 var port = process.env.PORT || 3000; // set the port
-mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
+mongoose.connect(db.url); // connect to mongoDB database
 const conn = mongoose.connection
 conn.once('open', function () {
     console.log('Connection successful.')
 });
 
-// get all data/stuff of the body (POST) parameters
+// get all data of the body (POST) parameters
 app.use(bodyParser.json()); // parse application/json 
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
@@ -34,8 +32,6 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-f
 app.use(methodOverride('X-HTTP-Method-Override')); // override with the X-HTTP-Method-Override header in the request. simulate DELETE/PUT
 app.use(express.static(__dirname + '/public'))
     .use(cookieParser());   // set the static files location /public/img will be /img for users
-
-
 
 app.use(fileUpload());
 
@@ -54,7 +50,7 @@ app.use(function (req, res, next) {
 // routes ==================================================
 app.use('/NewAlbum_Upload', upload);
 app.use('/NewAlbum_Choose', choose);
-app.use('/NewAlbum_Music', music);
+app.use('/NewAlbum_Music' , music);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

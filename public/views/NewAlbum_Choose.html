@@ -35,10 +35,10 @@
             align-items: center;
             justify-content: center;
         }
-        ​
     </style>
 
     <div class="container">
+        <!--------Display the album name suggestions--------->
         <div class="left">
             <h1>Name</h1>
                 <br>
@@ -49,6 +49,7 @@
                 <button class="btn btn-primary" ng-click="ChooseName_3()">{{ keywordThree }}</button>
         </div>
 
+        <!--------Display the album color suggestions--------->
         <div class="right">
             <h1>Background</h1>
             <div class="choice1">
@@ -62,12 +63,12 @@
             <div class="choice3">
                 <button class="button" ng-click="ChooseColor_3()">choose</button>
             </div>
-            <!-- <img src="../../resources/background1.jpg" alt="Background 1" style="width:304px;height:228px;"> -->
         </div>
 
     </div>
 
     <hr>
 
+    <!--------Link to the NewAlbum_Music page--------->
     <a href="/NewAlbum_Music" ng-click="next()">Next</a>
 </div>

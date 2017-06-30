@@ -8,26 +8,25 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
 			controller: 'MainController'
 		})
 
+		// my page
 		.when('/nerds', {
 			templateUrl: 'views/nerd.html',
 			controller: 'NerdController'
 		})
 
-		.when('/geeks', {
-			templateUrl: 'views/geek.html',
-			controller: 'GeekController'	
-		})
-
+		// upload pictures for the new album
         .when('/NewAlbum_Upload', {
             templateUrl: 'views/NewAlbum_Upload.html',
             controller: 'NewAlbum_UploadController'
         })
 
+		// choose album name and color
         .when('/NewAlbum_Choose', {
             templateUrl: 'views/NewAlbum_Choose.html',
             controller: 'NewAlbum_ChooseController'
         })
 
+		// choose album music
         .when('/NewAlbum_Music', {
             templateUrl: 'views/NewAlbum_Music.html',
             controller: 'NewAlbum_MusicController'
