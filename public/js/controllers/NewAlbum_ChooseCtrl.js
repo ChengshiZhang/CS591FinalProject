@@ -12,7 +12,7 @@ angular.module('NewAlbum_ChooseCtrl', []).controller('NewAlbum_ChooseController'
 
         $http({
             method : "GET",
-            url : 'http://localhost:3000/api/ChooseName_1'
+            url : 'http://localhost:3000/NewAlbum_Choose/name_1'
         }).then(function mySuccess(response) {
             sharedProperties.setProperty(response);
         }, function myError(response) {
@@ -25,7 +25,7 @@ angular.module('NewAlbum_ChooseCtrl', []).controller('NewAlbum_ChooseController'
 
         $http({
             method : "GET",
-            url : 'http://localhost:3000/api/ChooseName_2'
+            url : 'http://localhost:3000/NewAlbum_Choose/name_2'
         }).then(function mySuccess(response) {
             sharedProperties.setProperty(response);
         }, function myError(response) {
@@ -38,7 +38,7 @@ angular.module('NewAlbum_ChooseCtrl', []).controller('NewAlbum_ChooseController'
 
         $http({
             method : "GET",
-            url : 'http://localhost:3000/api/ChooseName_3'
+            url : 'http://localhost:3000/NewAlbum_Choose/name_3'
         }).then(function mySuccess(response) {
             sharedProperties.setProperty(response);
         }, function myError(response) {
@@ -51,7 +51,7 @@ angular.module('NewAlbum_ChooseCtrl', []).controller('NewAlbum_ChooseController'
 
         $http({
             method : "POST",
-            url : 'http://localhost:3000/api/ChooseColor_1'
+            url : 'http://localhost:3000/NewAlbum_Choose/color_1'
         })
 
     }
@@ -60,7 +60,7 @@ angular.module('NewAlbum_ChooseCtrl', []).controller('NewAlbum_ChooseController'
 
         $http({
             method : "POST",
-            url : 'http://localhost:3000/api/ChooseColor_2'
+            url : 'http://localhost:3000/NewAlbum_Choose/color_2'
         })
 
     }
@@ -69,13 +69,17 @@ angular.module('NewAlbum_ChooseCtrl', []).controller('NewAlbum_ChooseController'
 
         $http({
             method : "POST",
-            url : 'http://localhost:3000/api/ChooseColor_3'
+            url : 'http://localhost:3000/NewAlbum_Choose/color_3'
         })
 
     }
 
+    //unused
     $scope.next = function next(){
-
+        $http({
+            method : "GET",
+            url : 'http://localhost:3000/NewAlbum_Choose/next'
+        })
     }
 
 });

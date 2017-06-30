@@ -7,7 +7,7 @@ angular.module('NewAlbum_UploadCtrl', []).controller('NewAlbum_UploadController'
 
         $http({
             method : "GET",
-            url : 'http://localhost:3000/api/NewAlbum_Upload_Next'
+            url : 'http://localhost:3000/NewAlbum_Upload/next'
         }).then(function mySuccess(response) {
             sharedProperties.setProperty(response);
         }, function myError(response) {

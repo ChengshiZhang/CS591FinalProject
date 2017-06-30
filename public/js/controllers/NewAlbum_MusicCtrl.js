@@ -12,28 +12,28 @@ angular.module('NewAlbum_MusicCtrl', []).controller('NewAlbum_MusicController', 
     $scope.ChooseMusic_1 = function ChooseMusic_1(){
         $http({
             method : "POST",
-            url : 'http://localhost:3000/api/ChooseMusic_1'
+            url : 'http://localhost:3000/NewAlbum_Music/music_1'
         })
     }
 
     $scope.ChooseMusic_2 = function ChooseMusic_2(){
         $http({
             method : "POST",
-            url : 'http://localhost:3000/api/ChooseMusic_2'
+            url : 'http://localhost:3000/NewAlbum_Music/music_2'
         })
     }
 
     $scope.ChooseMusic_3 = function ChooseMusic_3(){
         $http({
             method : "POST",
-            url : 'http://localhost:3000/api/ChooseMusic_3'
+            url : 'http://localhost:3000/NewAlbum_Music/music_3'
         })
     }
 
     $scope.nextPage = function nextPage(){
         $http({
             method : "GET",
-            url : 'http://localhost:3000/api/NewAlbum_Music_Next'
+            url : 'http://localhost:3000/NewAlbum_Music/next'
         })
     }
 

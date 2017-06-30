@@ -5,10 +5,13 @@ var mongoose       = require('mongoose');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
 var fileUpload    = require('express-fileupload');
-var request = require('request'); // "Request" library
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
+const upload = require('./app/routes/NewAlbum_Upload');
+const choose = require('./app/routes/NewAlbum_Choose');
+const music  = require('./app/routes/NewAlbum_Music');
+const spotifyAuth = require('./app/routes/spotifyAuth');
 // configuration ===========================================
 
 // config files
@@ -34,7 +37,31 @@ app.use(express.static(__dirname + '/public'))
 
 app.use(fileUpload());
 // routes ==================================================
-require('./app/routes')(app); // pass our application into our routes
+app.use('/NewAlbum_Upload', upload);
+app.use('/NewAlbum_Choose', choose);
+app.use('/NewAlbum_Music', music);
+app.use('/', spotifyAuth);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    const err = new Error('Not Found')
+    err.status = 404;
+    next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development' || true) {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
 
 // start app ===============================================
 app.listen(port);
