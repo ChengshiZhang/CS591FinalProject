@@ -31,10 +31,6 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
         .when('/NewAlbum_Music', {
             templateUrl: 'views/NewAlbum_Music.html',
             controller: 'NewAlbum_MusicController'
-        })
-
-        .when('/login', {
-            redirectTo: "http://localhost:3000/login"
         });
 
 	$locationProvider.html5Mode(true);

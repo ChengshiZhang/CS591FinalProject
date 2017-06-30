@@ -8,16 +8,18 @@ var fileUpload    = require('express-fileupload');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-const upload = require('./app/routes/NewAlbum_Upload');
-const choose = require('./app/routes/NewAlbum_Choose');
-const music  = require('./app/routes/NewAlbum_Music');
+const upload      = require('./app/routes/NewAlbum_Upload');
+const choose      = require('./app/routes/NewAlbum_Choose');
+const music       = require('./app/routes/NewAlbum_Music');
 const spotifyAuth = require('./app/routes/spotifyAuth');
+const currentUser = require('./config/currentUser');
+
 // configuration ===========================================
 
 // config files
 var db = require('./config/db');
 
-var port = process.env.PORT || 3000; // set our port
+var port = process.env.PORT || 3000; // set the port
 mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
 const conn = mongoose.connection
 conn.once('open', function () {
@@ -36,11 +38,23 @@ app.use(express.static(__dirname + '/public'))
 
 
 app.use(fileUpload());
+
+// Authentication ==================================================
+app.use('/', spotifyAuth);
+
+// Protect the routes
+app.use(function (req, res, next) {
+    if (currentUser.isAuthenticated == false) {
+        console.log("Authentication failed")
+        return res.redirect('/');
+    }
+    next();
+});
+
 // routes ==================================================
 app.use('/NewAlbum_Upload', upload);
 app.use('/NewAlbum_Choose', choose);
 app.use('/NewAlbum_Music', music);
-app.use('/', spotifyAuth);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
